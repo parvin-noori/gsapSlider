@@ -94,7 +94,11 @@ $(document).ready(function () {
       .children()
       .not(".hero.project-img");
     let uniqproject = $(this).closest(".project");
+
+    // disable all horiz slider 
     createHorizSlider(projectItems);
+
+    // enable uniq project
     createHorizSlider(uniqprojectSlides, false);
 
     setTimeout(() => {
