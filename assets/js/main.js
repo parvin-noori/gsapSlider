@@ -9,6 +9,8 @@ $(document).ready(function () {
 
   const minScale = 0.65;
   const maxScale = 0.75;
+  const itemImgWidth = 699;
+  const itemTxtWidth = 290;
 
   eraProjectss.forEach((item, index) => {
     let currentHeight = index === 0 ? 0 : previousHeight;
@@ -19,10 +21,10 @@ $(document).ready(function () {
     // config inital style
     // ======================
     gsap.set(itemImgs, {
-      width: "699px",
+      width: `${itemImgWidth}px`,
     });
     gsap.set(itemText, {
-      width: "290px",
+      width: `${itemTxtWidth}px`,
     });
 
     gsap.set(item, {
@@ -45,7 +47,7 @@ $(document).ready(function () {
   gsap.set(eraProjects, {
     scale: maxScale,
     transformOrigin: "center 253px 0px",
-    width: "699px",
+    width: `${itemImgWidth}px`,
   });
 
   // ====================
@@ -56,7 +58,7 @@ $(document).ready(function () {
   tl.to(eraProjects, {
     scale: minScale,
     transformOrigin: "center 253px",
-    ease: "power4.in",
+    ease: "power1.in",
     duration: 2,
   });
 
@@ -88,7 +90,8 @@ $(document).ready(function () {
     ".project-content > *:not(:first-child)"
   );
 
-  $(heroImg).click(function () {
+  $(heroImg).click(function (event) {
+    event.stopPropagation();
     handleProjectClick(this);
   });
 
@@ -99,14 +102,18 @@ $(document).ready(function () {
       .not(".hero.project-img");
     let uniqproject = $(heroImg).closest(".project");
 
-    // disable all horiz slider
-    createHorizSlider(projectItems);
-    resetDragableSlider(eraProjectss);
-    projectInfoAnimate($(eraProjectss), true);
+    if (!uniqproject.hasClass("active")) {
+      // disable all horiz slider
+      createHorizSlider(projectItems);
+      resetDragableSlider(eraProjectss);
+      projectInfoAnimate($(eraProjectss), true);
+      $(eraProjectss).removeClass("active");
 
-    // enable uniq project
-    createHorizSlider(uniqprojectSlides, false);
-    projectInfoAnimate(uniqproject, false);
+      // enable uniq project
+      uniqproject.addClass("active");
+      createHorizSlider(uniqprojectSlides, false);
+      projectInfoAnimate(uniqproject, false);
+    }
 
     setTimeout(() => {
       itemWidth = $(".project-content").width();
