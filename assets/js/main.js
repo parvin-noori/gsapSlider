@@ -89,29 +89,32 @@ $(document).ready(function () {
   );
 
   $(heroImg).click(function () {
-    let uniqprojectSlides = $(this)
+    handleProjectClick(this);
+  });
+
+  function handleProjectClick(heroImg) {
+    let uniqprojectSlides = $(heroImg)
       .parent()
       .children()
       .not(".hero.project-img");
-    let uniqproject = $(this).closest(".project");
+    let uniqproject = $(heroImg).closest(".project");
 
     // disable all horiz slider
     createHorizSlider(projectItems);
     resetDragableSlider(eraProjectss);
-    projectInfoAnimate($(eraProjectss),true);
+    projectInfoAnimate($(eraProjectss), true);
 
     // enable uniq project
     createHorizSlider(uniqprojectSlides, false);
-    projectInfoAnimate(uniqproject,false);
+    projectInfoAnimate(uniqproject, false);
 
     setTimeout(() => {
       itemWidth = $(".project-content").width();
       drageHorizSlider(uniqproject);
     }, 10);
-  });
+  }
 
-
-  // create horiz slider 
+  // create horiz slider
   function createHorizSlider(slides, isPaused = true) {
     let tlSlider = gsap.timeline({ paused: isPaused });
     tlSlider.fromTo(
@@ -129,12 +132,10 @@ $(document).ready(function () {
     return tlSlider;
   }
 
-
-  // project info animate 
+  // project info animate
   function projectInfoAnimate(uniqproject, isPaused = true) {
     let additionalInfo = uniqproject.find(".additional-info");
     let socialNetworks = uniqproject.find(".social-networks");
-    
 
     let tl = gsap.timeline({ paused: isPaused });
 
