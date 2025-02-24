@@ -3,13 +3,13 @@ $(document).ready(function () {
   const eraHeight = $(".era-height");
   const eraProjectss = gsap.utils.toArray(".project");
   let previousHeight = 0;
-  let gap = 30;
+  let gap = 0;
   let totalHeight = 0;
   let itemWidth;
 
   const minScale = 0.65;
   const maxScale = 0.75;
-  const itemImgWidth = 699;
+  const itemImgWidth = 350;
   const itemTxtWidth = 290;
 
   eraProjectss.forEach((item, index) => {
@@ -27,12 +27,14 @@ $(document).ready(function () {
       width: `${itemTxtWidth}px`,
     });
 
+    
     gsap.set(item, {
       y: currentHeight,
     });
 
-    previousHeight = $(item).height() + gap;
-
+    
+    previousHeight += $(item).height() + gap;
+    
     totalHeight += $(item).height();
 
     if (index === eraProjectss.length - 1) {
@@ -96,6 +98,7 @@ $(document).ready(function () {
   });
 
   function handleProjectClick(heroImg) {
+  
     let uniqprojectSlides = $(heroImg)
       .parent()
       .children()
@@ -104,15 +107,15 @@ $(document).ready(function () {
 
     if (!uniqproject.hasClass("active")) {
       // disable all horiz slider
-      createHorizSlider(projectItems);
-      resetDragableSlider(eraProjectss);
-      projectInfoAnimate($(eraProjectss), true);
+      // createHorizSlider(projectItems);
+      // resetDragableSlider(eraProjectss);
+      // projectInfoAnimate($(eraProjectss), true);
       $(eraProjectss).removeClass("active");
 
       // enable uniq project
       uniqproject.addClass("active");
-      createHorizSlider(uniqprojectSlides, false);
-      projectInfoAnimate(uniqproject, false);
+      // createHorizSlider(uniqprojectSlides, false);
+      // projectInfoAnimate(uniqproject, false);
     }
 
     setTimeout(() => {
