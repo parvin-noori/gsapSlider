@@ -1,31 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --animate-fade-in-ltr: fadeInLtr 0.5s ease-out forwards;
-  --animate-fade-in-rtl: fadeInRtl 0.5s ease-out forwards;
   --cursor-arrow-right: url('../imgs/arrow-right.png') 16 16, pointer;
   --cursor-arrow-left: url('../imgs/arrow-left.png') 16 16, pointer;
   --cursor-play: url('../imgs/circle-play.svg') 16 16, pointer;
   --cursor-pause: url('../imgs/circle-pause.svg') 16 16, pointer;
 
-  @keyframes fadeInLtr {
-    0% {
-      opacity: 0;
-      transform: translateX(-100%);
-    }
-    100% {
-      opacity: 100;
-      transform: translateX(0%);
-    }
-  }
-  @keyframes fadeInRtl {
-    0% {
-      opacity: 0;
-      transform: translateX(100%);
-    }
-    100% {
-      opacity: 100;
-      transform: translateX(0%);
-    }
-  }
+
 }

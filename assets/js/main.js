@@ -95,18 +95,23 @@ $(document).ready(function () {
       .not(".hero.project-img");
     let uniqproject = $(this).closest(".project");
 
-    // disable all horiz slider 
+    // disable all horiz slider
     createHorizSlider(projectItems);
+    resetDragableSlider(eraProjectss);
+    projectInfoAnimate($(eraProjectss),true);
 
     // enable uniq project
     createHorizSlider(uniqprojectSlides, false);
+    projectInfoAnimate(uniqproject,false);
 
     setTimeout(() => {
-       itemWidth = $(".project-content").width();
+      itemWidth = $(".project-content").width();
       drageHorizSlider(uniqproject);
     }, 10);
   });
 
+
+  // create horiz slider 
   function createHorizSlider(slides, isPaused = true) {
     let tlSlider = gsap.timeline({ paused: isPaused });
     tlSlider.fromTo(
@@ -123,6 +128,33 @@ $(document).ready(function () {
 
     return tlSlider;
   }
+
+
+  // project info animate 
+  function projectInfoAnimate(uniqproject, isPaused = true) {
+    let additionalInfo = uniqproject.find(".additional-info");
+    let socialNetworks = uniqproject.find(".social-networks");
+    
+
+    let tl = gsap.timeline({ paused: isPaused });
+
+    tl.fromTo(
+      [additionalInfo, socialNetworks],
+      {
+        opacity: 0,
+        xPercent: -50,
+        stagger: 0,
+      },
+      {
+        opacity: 1,
+        xPercent: 0,
+      }
+    );
+
+    return tl;
+  }
+
+  projectInfoAnimate($(eraProjectss));
 
   createHorizSlider(projectItems);
 
@@ -160,5 +192,11 @@ $(document).ready(function () {
         currentSlide = newSlide;
       }
     }
+  }
+
+  // Reset or reverse the slider to the first slide position
+  function resetDragableSlider(uniqproject) {
+    gsap.to(uniqproject, { x: 0, duration: 0.5 });
+    currentSlide = 0;
   }
 });
