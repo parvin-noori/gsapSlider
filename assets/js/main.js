@@ -14,7 +14,6 @@ $(document).ready(function () {
     let currentHeight = index === 0 ? 0 : previousHeight;
     let itemImgs = $(item).find(".project-img");
     let itemText = $(item).find(".project-text");
-    itemWidth = itemImgs.width() + itemText.width();
 
     // ====================
     // config inital style
@@ -39,6 +38,8 @@ $(document).ready(function () {
         height: totalHeight,
       });
     }
+
+    // itemWidth = itemImgs.width() + itemText.width();
   });
 
   gsap.set(eraProjects, {
@@ -79,22 +80,27 @@ $(document).ready(function () {
   });
 
   // ====================
-  // draggable feature
+  // create horiz slider
   // ====================
-  gsap.registerPlugin(Draggable);
 
   let heroImg = gsap.utils.toArray(".project-img.hero");
-  let slides = gsap.utils.toArray(".project > *");
-  let currentSlide = 0;
-  let snapPoints = slides.map((slide) => slide.offsetLeft);
   let projectItems = gsap.utils.toArray(
     ".project-content > *:not(:first-child)"
   );
 
   $(heroImg).click(function () {
-    let uniqproject = $(this).parent().children().not(".hero.project-img");
-    createHorizSlider(uniqproject, false);
-    // Slider.reverse()
+    let uniqprojectSlides = $(this)
+      .parent()
+      .children()
+      .not(".hero.project-img");
+    let uniqproject = $(this).closest(".project");
+    createHorizSlider(projectItems);
+    createHorizSlider(uniqprojectSlides, false);
+
+    setTimeout(() => {
+       itemWidth = $(".project-content").width();
+      drageHorizSlider(uniqproject);
+    }, 10);
   });
 
   function createHorizSlider(slides, isPaused = true) {
@@ -116,25 +122,39 @@ $(document).ready(function () {
 
   createHorizSlider(projectItems);
 
-  let getSlideIndexAt = (x) =>
-    snapPoints.indexOf(gsap.utils.snap(snapPoints, x));
+  // ====================
+  // draggable feature
+  // ====================
 
-  let draggable = Draggable.create(".project", {
-    bounds: { minX: 0, maxX: itemWidth },
-    type: "x",
-    onDragEnd() {
-      updateSlide(this.endX);
-    },
-    inertia: true,
-    snap: {
-      x: (value) => gsap.utils.snap(snapPoints, value),
-    },
-  })[0];
+  gsap.registerPlugin(Draggable);
 
-  function updateSlide(x) {
-    const newSlide = getSlideIndexAt(x);
-    if (newSlide !== currentSlide) {
-      currentSlide = newSlide;
+  function drageHorizSlider(uniqproject) {
+    let slides = uniqproject.children();
+    let currentSlide = 0;
+    let snapPoints = Array.from(slides).map((slide) => {
+      slide.offsetLeft;
+    });
+
+    let getSlideIndexAt = (x) =>
+      snapPoints.indexOf(gsap.utils.snap(snapPoints, x));
+
+    Draggable.create(uniqproject, {
+      bounds: { minX: 0, maxX: -itemWidth },
+      type: "x",
+      onDragEnd() {
+        updateSlide(this.endX);
+      },
+      inertia: true,
+      snap: {
+        x: (value) => gsap.utils.snap(snapPoints, value),
+      },
+    })[0];
+
+    function updateSlide(x) {
+      const newSlide = getSlideIndexAt(x);
+      if (newSlide !== currentSlide) {
+        currentSlide = newSlide;
+      }
     }
   }
 });
