@@ -2,18 +2,16 @@ $(document).ready(function () {
   const eraProjects = $(".era-projects");
   const eraHeight = $(".era-height");
   const eraProjectss = gsap.utils.toArray(".project");
-  let previousHeight = 0;
-  let gap = 0;
-  let totalHeight = 0;
+  let gap = 30;
   let itemWidth;
 
   const minScale = 0.65;
   const maxScale = 0.75;
   const itemImgWidth = 350;
+  const activeItemImgWidth = 699;
   const itemTxtWidth = 290;
 
   eraProjectss.forEach((item, index) => {
-    let currentHeight = index === 0 ? 0 : previousHeight;
     let itemImgs = $(item).find(".project-img");
     let itemText = $(item).find(".project-text");
 
@@ -27,22 +25,6 @@ $(document).ready(function () {
       width: `${itemTxtWidth}px`,
     });
 
-    
-    gsap.set(item, {
-      y: currentHeight,
-    });
-
-    
-    previousHeight += $(item).height() + gap;
-    
-    totalHeight += $(item).height();
-
-    if (index === eraProjectss.length - 1) {
-      gsap.set(eraHeight, {
-        height: totalHeight,
-      });
-    }
-
     // itemWidth = itemImgs.width() + itemText.width();
   });
 
@@ -51,6 +33,46 @@ $(document).ready(function () {
     transformOrigin: "center 253px 0px",
     width: `${itemImgWidth}px`,
   });
+
+  setTimeout(() => {
+    configItemHeight(false);
+  }, 10);
+
+  function configItemHeight(isPaused = true) {
+    let previousHeight = 0;
+    let totalHeight = 0;
+
+    eraProjectss.forEach((item, index) => {
+      const currentItem = $(item);
+      let currentHeight = index === 0 ? 0 : previousHeight;
+      let tl = gsap.timeline({ paused: isPaused });
+
+      if (!currentItem.hasClass("active")) {
+        tl.to(item, { y: currentHeight });
+      } else {
+        const hero = currentItem.find(".hero");
+        const originalWidth = hero.width(); // original
+        hero.css("width", activeItemImgWidth);
+        const newHeight = currentItem.outerHeight(true);
+        hero.css("width", originalWidth);
+
+        tl.to(hero, { width: activeItemImgWidth, transformOrigin: "center" });
+
+        previousHeight += newHeight + gap;
+        totalHeight += newHeight;
+      }
+
+      if (!currentItem.hasClass("active")) {
+        const itemHeight = currentItem.outerHeight(true);
+        previousHeight += itemHeight + gap;
+        totalHeight += itemHeight;
+      }
+
+      if (index === eraProjectss.length - 1) {
+        gsap.set(eraHeight, { height: totalHeight });
+      }
+    });
+  }
 
   // ====================
   // scale timeline
@@ -98,24 +120,25 @@ $(document).ready(function () {
   });
 
   function handleProjectClick(heroImg) {
-  
     let uniqprojectSlides = $(heroImg)
       .parent()
       .children()
       .not(".hero.project-img");
     let uniqproject = $(heroImg).closest(".project");
+    let uniqprojectContent = $(heroImg).parent();
 
     if (!uniqproject.hasClass("active")) {
       // disable all horiz slider
-      // createHorizSlider(projectItems);
-      // resetDragableSlider(eraProjectss);
-      // projectInfoAnimate($(eraProjectss), true);
+      createHorizSlider(projectItems);
+      resetDragableSlider(eraProjectss);
+      projectInfoAnimate($(eraProjectss), true);
       $(eraProjectss).removeClass("active");
 
       // enable uniq project
       uniqproject.addClass("active");
-      // createHorizSlider(uniqprojectSlides, false);
-      // projectInfoAnimate(uniqproject, false);
+      configItemHeight(false);
+      createHorizSlider(uniqprojectSlides, false);
+      projectInfoAnimate(uniqproject, false);
     }
 
     setTimeout(() => {
