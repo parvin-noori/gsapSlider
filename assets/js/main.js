@@ -9,6 +9,7 @@ $(document).ready(function () {
   const maxScale = 0.75;
   const itemImgWidth = 350;
   const activeItemImgWidth = 699;
+  const activeItemHeight = 700;
   const itemTxtWidth = 290;
 
   eraProjectss.forEach((item, index) => {
@@ -38,26 +39,67 @@ $(document).ready(function () {
     configItemHeight(false);
   }, 10);
 
-  function configItemHeight(isPaused = true) {
+  function itemHeight(item, isPaused = true) {
+    const currentItem = $(item);
+    const hero = currentItem.find(".project-img");
+    const projectContent = currentItem.find(".project-content");
+    let slides = projectContent.children().not(".hero.project-img");
+
+    let tl = gsap.timeline({ paused: isPaused });
+
+    tl.to(hero, {
+      width: activeItemImgWidth,
+      transformOrigin: "center",
+    });
+    tl.to(
+      projectContent,
+      {
+        height: activeItemHeight,
+        transformOrigin: "center",
+      },
+      "-=1"
+    )
+      .to(
+        item,
+        {
+          xPercent: -20,
+        },
+        "-=1"
+      )
+      .fromTo(
+        slides,
+        {
+          xPercent: 50,
+          display: "none",
+        },
+        {
+          xPercent: 0,
+          display: "block",
+          delay: 1,
+        }
+      );
+
+    return tl;
+  }
+
+  function configItemHeight() {
     let previousHeight = 0;
     let totalHeight = 0;
 
     eraProjectss.forEach((item, index) => {
       const currentItem = $(item);
       let currentHeight = index === 0 ? 0 : previousHeight;
-      let tl = gsap.timeline({ paused: isPaused });
 
       if (!currentItem.hasClass("active")) {
-        tl.to(item, { y: currentHeight });
+        gsap.set(item, { y: currentHeight });
       } else {
-        const hero = currentItem.find(".hero");
+        const hero = currentItem.find(".project-img");
         const originalWidth = hero.width(); // original
         hero.css("width", activeItemImgWidth);
         const newHeight = currentItem.outerHeight(true);
         hero.css("width", originalWidth);
 
-        tl.to(hero, { width: activeItemImgWidth, transformOrigin: "center" });
-
+        itemHeight(item, false);
         previousHeight += newHeight + gap;
         totalHeight += newHeight;
       }
@@ -129,16 +171,16 @@ $(document).ready(function () {
 
     if (!uniqproject.hasClass("active")) {
       // disable all horiz slider
-      createHorizSlider(projectItems);
-      resetDragableSlider(eraProjectss);
-      projectInfoAnimate($(eraProjectss), true);
+      // createHorizSlider(projectItems);
+      // resetDragableSlider(eraProjectss);
+      // projectInfoAnimate($(eraProjectss), true);
       $(eraProjectss).removeClass("active");
 
       // enable uniq project
       uniqproject.addClass("active");
-      configItemHeight(false);
-      createHorizSlider(uniqprojectSlides, false);
-      projectInfoAnimate(uniqproject, false);
+      configItemHeight();
+      // createHorizSlider(uniqprojectSlides, false);
+      // projectInfoAnimate(uniqproject, false);
     }
 
     setTimeout(() => {
@@ -159,6 +201,7 @@ $(document).ready(function () {
       {
         xPercent: 0,
         display: "block",
+        delay: 1,
       }
     );
 
